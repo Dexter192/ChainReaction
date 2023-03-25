@@ -31,6 +31,10 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = rb.velocity + velocity;
     }
+    public void SetVelocity(Vector2 velocity)
+    {
+        rb.velocity = velocity;
+    }
 
     public void OnJump(InputAction.CallbackContext ctx) => jumped = ctx.performed;
     public void OnMove(InputAction.CallbackContext ctx) => movementInput = ctx.ReadValue<Vector2>();

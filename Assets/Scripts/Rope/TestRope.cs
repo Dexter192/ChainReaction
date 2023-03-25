@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.InputSystem;
 
 public enum ColliderType
@@ -16,10 +19,11 @@ public class TestRope : MonoBehaviour
     [SerializeField] private float ropeElasticity = 0.001f;
     [SerializeField] private float ropePullbackForce = 0.1f;
     [SerializeField] Vector2 forceGravity = new Vector2(0f, -1f);
-
+    
     // Rope features
     [SerializeField] private float ropeSegLen = 0.5f;
     [SerializeField] private int totalNodes = 20;
+    [SerializeField] public int numIterations = 10;
     [SerializeField] private float lineWidth = 1f;
 
     [SerializeField] private GameObject endPoint;
@@ -27,34 +31,20 @@ public class TestRope : MonoBehaviour
     [SerializeField] private LineRenderer lineRenderer;
 
     Playerhandler _playerhandler;
-    private List<RopeSegment> ropeNodes = new List<RopeSegment>();
+    private List<RopeSegment> ropeSegments = new();
 
     // Collision attributes
-    // Maximum total number of colliders that the rope can touch
-    private const int MAX_ROPE_COLLISIONS = 32;
     // Collision radius around reach node. Set it high to avoid tunneling
-    [SerializeField] public float COLLISION_RADIUS = 0.25f;
-    // Collider buffer size; the maximum number of colliders that a single node can touch at once.
-    private const int COLLIDER_BUFFER_SIZE = 8;
+    [SerializeField] public float COLLISION_RADIUS = 0.1f;
+    // Stop the player from sliding if the change is position is less than this
+    private const float STOP_PLAYER_SLIDING_DISTANCE = 0.0005f;
+    // Dictionary collecting the colliding rope segments for each collider
+    private Dictionary<Collider2D, HashSet<int>> collisionInfo = new();
 
-    // -- *snip* --
-    private int numCollisions;
+    // Render the rope with an offset such that the rope doesn't hover above the ground
+    private Vector2 ROPE_RENDER_OFFSET = new(0, 0.04f);
+
     private bool shouldSnapshotCollision;
-    private CollisionInfo[] collisionInfos;
-    private Collider2D[] colliderBuffer;
-
-    private void Awake()
-    {
-        // -- *snip* --
-        // Allocate collision structures.
-        collisionInfos = new CollisionInfo[MAX_ROPE_COLLISIONS];
-        for (int i = 0; i < collisionInfos.Length; i++)
-        {
-            collisionInfos[i] = new CollisionInfo(totalNodes);
-        }
-
-        colliderBuffer = new Collider2D[MAX_ROPE_COLLISIONS];
-    }
 
     private void Start()
     {
@@ -65,9 +55,9 @@ public class TestRope : MonoBehaviour
 
         for (int i = 0; i < totalNodes; i++)
         {
-            ropeNodes.Add(new RopeSegment(
-                    new Vector2((startPos.x - endPos.x) * i / (this.totalNodes),
-                                (startPos.y - endPos.y) * i / (this.totalNodes)
+            ropeSegments.Add(new RopeSegment(
+                    new Vector2(startPos.x - (startPos.x - endPos.x) * i / (this.totalNodes),
+                                startPos.y - (startPos.y - endPos.y) * i / (this.totalNodes)
                     )));
         }
 
@@ -79,369 +69,134 @@ public class TestRope : MonoBehaviour
     {
         if (shouldSnapshotCollision)
         {
-            SnapshotCollision();
+            collisionInfo = TestRopeCollider.SnapshotCollision(ropeSegments);
+            shouldSnapshotCollision = false;
         }
         Simulate();
-        this.DrawRope();
+        DrawRope();
     }
 
     private void FixedUpdate()
     {
         shouldSnapshotCollision = true;
-        //this.Simulate(); // Moved to Simulate
     }
-
-    private void SnapshotCollision()
+    private void Simulate()
     {
-        numCollisions = 0;
-        // Loop through each node and get collisions within a radius
-        for (int i = 0; i < totalNodes; i++)
+        // SIMULATION - The physics part
+        for (int i = 0; i < totalNodes - 1; i++)
         {
-            Collider2D[] overlappingColliders = Physics2D.OverlapCircleAll(ropeNodes[i].posNow, COLLISION_RADIUS);
-            foreach (Collider2D col in  overlappingColliders) { 
-            //for (int j = 0; j < collisions; j++) {
-                //Collider2D col = colliderBuffer[j];
-                int id = col.GetInstanceID();
+            RopeSegment segment = ropeSegments[i];
+            Vector2 velocity = segment.posNow - segment.posOld;
+            velocity *= friction;
+            // Don't apply gravity if we are colliding
+            if (!segment.isColliding)
+                velocity += forceGravity * Time.deltaTime;
 
-                // Ignore collision with player
-                if (col.tag == "Player")
-                {
-                    continue;
-                }
-                if (!col.bounds.Contains(ropeNodes[i].posNow))
-                {
-                    continue;
-                }
+            segment.posOld = segment.posNow;
+            segment.posNow += velocity;
+            ropeSegments[i] = segment;
+        }
 
-                // Check if we already have this collider in our collisionInfos
-                // Consider replacing this with a HashSet of some form.
-                int idx = -1;
-                for (int k = 0; k < numCollisions; k++) {
-                    if (collisionInfos[k].id == id)
-                    {
-                        idx = k;
-                        break;
-                    }
-                }
-
-                // If we didn'T have the collider, we need to add it 
-                CollisionInfo ci = collisionInfos[numCollisions];
-                if (idx == -1)
-                {
-                    // Record all the data we need to use into our class.
-                    ci.collider2D = col;
-                    ci.id = id;
-                    ci.wtl = col.transform.worldToLocalMatrix;
-                    ci.ltw = col.transform.localToWorldMatrix;
-                    ci.scale = new Vector2(ci.ltw.GetColumn(0).magnitude,
-                                           ci.ltw.GetColumn(1).magnitude);
-                    ci.position = col.transform.position;
-                    ci.numCollisions = 1; // 1 collision, this one
-                    ci.collidingNodes[0] = i;
-
-                    switch (col)
-                    {
-                        case CircleCollider2D c:
-                            ci.colliderType = ColliderType.Circle;
-                            ci.colliderSize = new Vector2(c.radius, c.radius);
-                            break;
-                        case BoxCollider2D b:
-                            ci.colliderType = ColliderType.Box;
-                            ci.colliderSize = b.size;
-                            break;
-                        case CompositeCollider2D c:
-                            ci.colliderType = ColliderType.CompositeCollider;
-                            break;
-                        default:
-                            ci.colliderType = ColliderType.None;
-                            break;
-                    }
-
-                    numCollisions++;
-                    if (numCollisions >= MAX_ROPE_COLLISIONS)
-                    {
-                        return;
-                    }
-                }
-                // If we found the collider, the we just have to increment the collisions and add our node
-                else
-                {
-                    ci = collisionInfos[idx];
-                    if (ci.numCollisions >= MAX_ROPE_COLLISIONS - 1)
-                    {
-                        continue;
-                    }
-                    ci.collidingNodes[ci.numCollisions++] = i;
-                }
-            }
-            shouldSnapshotCollision = false;
+        // CONSTRAINTS
+        for (int i = 0; i < numIterations; i++)
+        {
+            ApplyConstraint();
+            ropeSegments = TestRopeCollider.AdjustCollision(ropeSegments, collisionInfo);
         }
     }
 
-    private void AdjustCollision()
-    {
-        for (int i = 0; i < numCollisions; i++)
-        {
-            CollisionInfo ci = collisionInfos[i];
-
-            switch (ci.colliderType)
-            {
-            case ColliderType.Circle:
-                {
-                    float radius = ci.colliderSize.x * Mathf.Max(ci.scale.x, ci.scale.y);
-                    for (int j = 0; j < ci.numCollisions; j++)
-                    {
-                        RopeSegment node = ropeNodes[ci.collidingNodes[j]];
-                        float distance = Vector2.Distance(ci.position, node.posNow);
-
-                        // Early out if we are not colliding
-                        if (distance - radius > 0) { continue; }
-
-                        // Push point outside circle
-                        Vector2 dir = (node.posNow - ci.position).normalized;
-                        Vector2 hitPos = ci.position + dir * radius;
-                        node.posNow = hitPos;
-                    }
-                }
-                break;
-            case ColliderType.Box:
-                {
-                    for (int j = 0; j < ci.numCollisions; j++)
-                    {
-                        RopeSegment node = ropeNodes[ci.collidingNodes[j]];
-                        Vector2 pointOnPerimeter = ci.collider2D.ClosestPoint(node.posNow);
-                        // Only adjust the point if it is inside the collider
-                        
-                        
-                        if (ci.collider2D.bounds.Contains(node.posNow))
-                        {
-                            Vector2 adjustDirection = (node.posNow - pointOnPerimeter).normalized;
-                            Vector2 newPosNow = pointOnPerimeter + adjustDirection * ci.colliderSize;
-                        }
-                                
-
-                        // SOLUTION FROM TUTORIAL - DONT DELETE UNLESS MY SOLUTION WORKS
-                        Vector2 localPoint = ci.wtl.MultiplyPoint(node.posNow);
-
-                        // If distance from center is more than box "radius" then we can't be colliding
-                        Vector2 half = ci.colliderSize * .5f;
-                        Vector2 scalar = ci.scale;
-                        float dx = localPoint.x;
-                        float px = half.x - Mathf.Abs(dx);
-                        if (px <= 0)
-                        {
-                            continue;
-                        }
-
-                        float dy = localPoint.y;
-                        float py = half.y - Mathf.Abs(dy);
-                        if (py <= 0)
-                        {
-                            continue;
-                        }
-
-                        // Push node out along the closest edge.
-                        // Need to multiply distance by scale or we'll mess up on scaled box corners.
-                        if (px * scalar.x < py * scalar.y)
-                        {
-                            float sx = Mathf.Sign(dx);
-                            localPoint.x = half.x * sx;
-                        }
-                        else
-                        {
-                            float sy = Mathf.Sign(dy);
-                            localPoint.y = half.y * sy;
-                        }
-
-                        Vector2 hitPos = ci.ltw.MultiplyPoint(localPoint);
-                        node.posNow = hitPos;
-                    }
-                }
-                break;
-                // TODO: Break up in methods
-                case ColliderType.CompositeCollider:
-                {
-                    for (int j = 0; j < ci.numCollisions; j++)
-                    {
-                        RopeSegment node = ropeNodes[ci.collidingNodes[j]];
-                        // If we are not in the collider, we can ignore the collider (It would make sense to move this to the collision check)
-                        if (!ci.collider2D.bounds.Contains(node.posNow))
-                        {
-                            continue;
-                        }
-                        CompositeCollider2D col = (CompositeCollider2D)ci.collider2D;
-                        float minDistance = Mathf.Infinity;
-                        Vector2 newPos = Vector2.zero;
-                        Vector2 posOnPerimeter = Vector2.zero;
-                        // Iterate over all paths and adjust the collision if we overlap
-                        PolygonCollider2D polygonCollider2D = gameObject.AddComponent<PolygonCollider2D>();
-                        polygonCollider2D.pathCount = 1;
-                            
-                        for (int k = 0; k < col.pathCount; k++) {
-                            Vector2[] points = new Vector2[col.GetPathPointCount(k)];
-                            col.GetPath(k, points);
-    
-                            // Check if the point is intersecting with the current path - Maybe obsolete(?) 
-                            polygonCollider2D.SetPath(0, points);    
-                            if (polygonCollider2D.bounds.Contains(node.posNow))
-                            {
-                                // Find the minimal distance between the edges of the polygon and the position 
-                                for (int l = 0; l < points.Length - 1; l++)
-                                {
-                                    float distance = DistancePointAndLine(points[l], points[l + 1], node.posNow);
-                                    if (minDistance > distance)
-                                    {
-                                        minDistance = distance;
-                                        posOnPerimeter = ProjectPointOnLine(points[l], points[l + 1], node.posNow);
-                                            newPos = posOnPerimeter + (posOnPerimeter - node.posNow).normalized * 0.005f;
-                                    }                            
-                                }
-                                node.posOld = node.posNow;
-                                node.posNow = newPos;
-                            }
-                        }
-                        Destroy(polygonCollider2D);
-                    }
-                }
-                break;
-            }
-        } 
-    }
-
-    private float DistancePointAndLine(Vector2 startP, Vector2 endP, Vector2 point)
-    {
-        Vector2 direction = (startP - endP).normalized;
-        return Mathf.Abs((point.x - startP.x) * direction.y - (point.y - startP.y) * direction.x);
-    }
-    private Vector2 ProjectPointOnLine(Vector2 startP, Vector2 endP, Vector2 point)
-    {
-        Vector2 direction = (startP - endP).normalized;
-        Vector2 lhs = point - startP;
-
-        float dotP = Vector2.Dot(lhs, direction);
-        return startP + direction * dotP;
-    }
     private void ApplyConstraint()
     {
         // If the player is moving, we pin the point to the player
-        AttachRopeSegmentToPlayer(this.startPoint, 0);
+        AttachRopeSegmentToPlayer(startPoint, 0);
 
         // Last Segment is pinned to the second player
-        AttachRopeSegmentToPlayer(this.endPoint, this.totalNodes - 1);
+        AttachRopeSegmentToPlayer(endPoint, totalNodes - 1);
 
         // CONSTRAINT - Ensure that rope segments are always a certain distance apart
-        for (int i = 0; i < this.totalNodes-1; i++)
+        for (int i = 0; i < totalNodes -1; i++)
         {
-            RopeSegment segment = this.ropeNodes[i];
-            RopeSegment nextSegment = this.ropeNodes[i + 1];
+            RopeSegment segment = ropeSegments[i];
+            RopeSegment nextSegment = ropeSegments[i + 1];
 
             float dist = (segment.posNow - nextSegment.posNow).magnitude;
-            float error = Mathf.Abs(dist - this.ropeSegLen);
-            Vector2 changeDir = Vector2.zero;
-
-            if (dist > ropeSegLen)
-            {
-                changeDir = (segment.posNow - nextSegment.posNow).normalized;
-            }
-            else if (dist < ropeSegLen)
-            {
-                changeDir = (nextSegment.posNow - segment.posNow).normalized;
-            }
+            float error = dist - ropeSegLen;
+            Vector2 changeDir = (segment.posNow - nextSegment.posNow).normalized;
             Vector2 changeAmount = changeDir * error;
+
             if (i == 0)
             {
-                segment.posNow -= changeAmount * this.ropePullbackForce;
-                this.ropeNodes[i] = segment;
-                nextSegment.posNow += changeAmount * (1-this.ropePullbackForce);
-                this.ropeNodes[i + 1] = nextSegment;
+                segment.posNow -= changeAmount * ropePullbackForce;
+                ropeSegments[i] = segment;
+                nextSegment.posNow += changeAmount * (1-ropePullbackForce);
+                ropeSegments[i + 1] = nextSegment;
 
                 // Slow the player down if the rope is stretched
-                ReducePlayersSpeedOnStretchedRope(this.startPoint, changeAmount);
+                ReducePlayersSpeedOnStretchedRope(startPoint, changeAmount);
             }
-            else if (i == this.totalNodes - 2)
+            else if (i == totalNodes - 2)
             {
-                segment.posNow -= changeAmount * (1 - this.ropePullbackForce);
-                this.ropeNodes[i] = segment;
-                nextSegment.posNow += changeAmount * this.ropePullbackForce;
-                this.ropeNodes[i + 1] = nextSegment;
+                segment.posNow -= changeAmount * (1 - ropePullbackForce);
+                ropeSegments[i] = segment;
+                nextSegment.posNow += changeAmount * ropePullbackForce;
+                ropeSegments[i + 1] = nextSegment;
 
                 // Slow the player down if the rope is stretched
-                ReducePlayersSpeedOnStretchedRope(this.endPoint, -changeAmount);
+                ReducePlayersSpeedOnStretchedRope(endPoint, -changeAmount);
             }
 
             else
             {
                 segment.posNow -= changeAmount * 0.5f;
-                this.ropeNodes[i] = segment;
+                ropeSegments[i] = segment;
                 nextSegment.posNow += changeAmount * 0.5f;
-                this.ropeNodes[i + 1] = nextSegment;
+                ropeSegments[i + 1] = nextSegment;
             }
 
         }
 
-        AttachPlayerToRopeSegment(this.startPoint, 0);
-        AttachPlayerToRopeSegment(this.endPoint, this.totalNodes-1);
+        AttachPlayerToRopeSegment(startPoint, 0);
+        AttachPlayerToRopeSegment(endPoint, totalNodes -1);
     }
 
     private void ReducePlayersSpeedOnStretchedRope(GameObject player, Vector2 changeAmount)
     {
+        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
         // Reduce the players speed depending on the rope stretch
-        if (player.GetComponent<PlayerMovement>().GetMovementState() != PlayerMovement.MovementState.idle)
+        if (playerMovement.GetMovementState() != PlayerMovement.MovementState.idle)
         {
-            player.GetComponent<PlayerMovement>().AddVelocity(-changeAmount * this.ropeElasticity);
+            playerMovement.AddVelocity(-changeAmount * ropeElasticity);
         }
     }
     private void AttachRopeSegmentToPlayer(GameObject player, int ropeSegmentIndex)
     {
-        RopeSegment firstSegment = this.ropeNodes[ropeSegmentIndex];
+        RopeSegment firstSegment = ropeSegments[ropeSegmentIndex];
         firstSegment.posNow = player.transform.position;
-        this.ropeNodes[ropeSegmentIndex] = firstSegment;
+        ropeSegments[ropeSegmentIndex] = firstSegment;
     }
 
     private void AttachPlayerToRopeSegment(GameObject player, int ropeSegmentIndex)
     {
-        RopeSegment ropeSegment = this.ropeNodes[ropeSegmentIndex];
-        // If the player is not moving, drag him back if the line is under tension 
-        player.transform.position = ropeSegment.posNow;
+        RopeSegment ropeSegment = ropeSegments[ropeSegmentIndex];
+        // Only attach the player back to the rope if the distance is significant
+        Vector2 playerPosition = player.transform.position;
+        if ((playerPosition - ropeSegment.posNow).magnitude > STOP_PLAYER_SLIDING_DISTANCE)
+            player.transform.position = ropeSegment.posNow;
     }
 
     private void DrawRope()
     {
-        float lineWidth = this.lineWidth;
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
 
-        Vector3[] ropePositions = new Vector3[this.totalNodes];
-        for (int i = 0; i < this.totalNodes; i++)
+        Vector3[] ropePositions = new Vector3[totalNodes];
+        for (int i = 0; i < totalNodes; i++)
         {
-            ropePositions[i] = this.ropeNodes[i].posNow;
+            // Render the line slightly lower such that it doesn't hover above the ground
+            ropePositions[i] = ropeSegments[i].posNow - ROPE_RENDER_OFFSET;
         }
         lineRenderer.positionCount = ropePositions.Length;
         lineRenderer.SetPositions(ropePositions);
-    }
-
-
-    private void Simulate()
-    {
-        // SIMULATION - The physics part
-        for (int i = 0; i < totalNodes-1; i++)
-        {
-            RopeSegment segment = this.ropeNodes[i];
-            Vector2 velocity = segment.posNow - segment.posOld;
-            velocity = velocity * this.friction;
-            segment.posOld = segment.posNow;
-            segment.posNow += velocity;
-            segment.posNow += forceGravity * Time.deltaTime;           
-            this.ropeNodes[i] = segment;
-        }
-
-        // CONSTRAINTS
-        for (int i = 0; i < 50; i++)
-        {
-            ApplyConstraint();
-            SnapshotCollision();
-            AdjustCollision();
-        }
     }
 }
 

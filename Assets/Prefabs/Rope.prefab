@@ -146,11 +146,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   friction: 0.5
-  lineWidth: 0.1
   ropeElasticity: 0.5
-  ropePullbackForce: 0.008
-  ropeSegLen: 0.25
-  segmentLength: 10
+  ropePullbackForce: 0.000008
+  forceGravity: {x: 0, y: -1}
+  ropeSegLen: 0.2
+  totalSegmentCount: 10
+  numIterations: 10
+  lineWidth: 0.1
 --- !u!114 &1222036705483308624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,4 +165,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3fe6445828e2274ea72caa8d17f3d02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rope: {fileID: 3255112595298807622}

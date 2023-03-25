@@ -6,9 +6,11 @@ public class RopeSegment
 {
     public Vector2 posNow { get; set; }
     public Vector2 posOld { get; set; }
+    public bool isColliding { get; set; }
     public RopeSegment(Vector3 pos)
     {
             this.posNow = pos;
             this.posOld = pos;
+            isColliding = false;
     }    
 }
