@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
       propertyPath: m_ActionEvents.Array.size
-      value: 12
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
       propertyPath: m_ActionEvents.Array.data[9].m_ActionId
@@ -42,6 +42,18 @@ PrefabInstance:
     - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
       propertyPath: m_ActionEvents.Array.data[11].m_ActionName
       value: Player_Arrow_Keyboard/Reset
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1549467410446285934, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
+      propertyPath: m_ActionEvents.Array.data[12].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2209724107970033855, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
       propertyPath: m_RootOrder

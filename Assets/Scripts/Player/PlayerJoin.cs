@@ -8,11 +8,10 @@ using UnityEngine.InputSystem;
 public class PlayerJoin : MonoBehaviour
 {
     private Playerhandler _playerhandler;
-
+    private CinemachineTargetGroup targetGroup;
     [SerializeField] private Rope rope;
 
-    CinemachineTargetGroup targetGroup;
-    public void Start()
+    public void Awake()
     {
         _playerhandler = Playerhandler.Instance;
 
@@ -22,7 +21,7 @@ public class PlayerJoin : MonoBehaviour
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[3], pairWithDevice: Gamepad.all[0]);
     }
 
-    private void AddPlayerToCinemachine(PlayerInput playerInput)
+    private void AddPlayerToCinemachine(PlayerInput playerInput, CinemachineTargetGroup targetGroup)
     {
         Cinemachine.CinemachineTargetGroup.Target newPlayerTarget;
         newPlayerTarget.target = playerInput.transform;
@@ -38,7 +37,7 @@ public class PlayerJoin : MonoBehaviour
     {
     }
 
-    private void OnPlayerJoin(PlayerInput playerInput)
+    public void OnPlayerJoin(PlayerInput playerInput)
     {
         // Set the player prefab
         targetGroup = GameObject.Find("CM TargetGroup1").GetComponent<CinemachineTargetGroup>();
@@ -59,7 +58,13 @@ public class PlayerJoin : MonoBehaviour
         Debug.Log("Player GameObject: " + playerInput.gameObject);
 
         // Add the new player to the camera controller
-        AddPlayerToCinemachine(playerInput);
+        AddPlayerToCinemachine(playerInput, targetGroup);
         Debug.Log("");
+    }
+
+    public void OnPlayerJoinManually(InputAction.CallbackContext ctx)
+    {
+        //PlayerInput playerInput = PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[0], pairWithDevice: InputSystem.devices[0]);
+        //OnPlayerJoin(playerInput);
     }
 }

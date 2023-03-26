@@ -14,11 +14,12 @@ GameObject:
   - component: {fileID: 1549467410446285926}
   - component: {fileID: 1549467410446285921}
   - component: {fileID: 1549467410446285923}
+  - component: {fileID: 5067423784504271551}
+  - component: {fileID: 1851594836865494651}
   - component: {fileID: 1549467410446285933}
   - component: {fileID: 1549467410446285935}
   - component: {fileID: -5061741888789890472}
   - component: {fileID: 1549467410446285934}
-  - component: {fileID: 1851594836865494651}
   - component: {fileID: 4180911099048830994}
   m_Layer: 7
   m_Name: Player
@@ -172,6 +173,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathSound: {fileID: 1549467410446285935}
+--- !u!114 &5067423784504271551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549467410446285929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a2ce10decf65d94fb7e18e32b93470c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1851594836865494651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549467410446285929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03fb545191258ec4ba283e98536a3ee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cherriesText: {fileID: 0}
+  collectionSoundEffect: {fileID: -5061741888789890472}
 --- !u!82 &1549467410446285933
 AudioSource:
   m_ObjectHideFlags: 0
@@ -569,25 +596,27 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: de4932c2-9ae3-4616-95c6-26779953aded
     m_ActionName: Player_Arrow_Keyboard/Reset
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8cdaea20-46d8-4182-9b5a-61f40d723f15
+    m_ActionName: Player/Join
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bcdfa73f-a2d0-4127-8a15-8c7933a688fc
+    m_ActionName: Player_Keyboard/AddNewPlayer[/Keyboard/n,/DualSenseGamepadHID/select,/DualShock4GamepadHID/select,/Keyboard/numpadPlus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 59be702e-7058-435c-a383-fa88f14c7b65
+    m_ActionName: Player_Arrow_Keyboard/AddNewPlayer[/Keyboard/numpadPlus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 94db369f-c373-4c81-b224-6fa7ec96d820
+    m_ActionName: Player_Gamepad/AddNewPlayer[/DualSenseGamepadHID/select,/DualShock4GamepadHID/select]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1851594836865494651
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1549467410446285929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03fb545191258ec4ba283e98536a3ee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cherriesText: {fileID: 0}
-  collectionSoundEffect: {fileID: -5061741888789890472}
 --- !u!95 &4180911099048830994
 Animator:
   serializedVersion: 5
