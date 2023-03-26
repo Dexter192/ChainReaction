@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,11 +11,13 @@ public class PlayerJoin : MonoBehaviour
     private Playerhandler _playerhandler;
     private CinemachineTargetGroup targetGroup;
     [SerializeField] private Rope rope;
+    [SerializeField] public GameObject playerJoinManuallyObserver;
 
-    public void Awake()
+    public void Start()
     {
         _playerhandler = Playerhandler.Instance;
-
+        //Instantiate(playerJoinManuallyObserver);
+        
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[0], pairWithDevice: InputSystem.devices[0]);
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[1], pairWithDevice: InputSystem.devices[0]);
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[2], pairWithDevice: InputSystem.devices[0]);
@@ -39,10 +42,14 @@ public class PlayerJoin : MonoBehaviour
 
     public void OnPlayerJoin(PlayerInput playerInput)
     {
+        if (playerInput.gameObject.CompareTag("Observer")) { return; }
         // Set the player prefab
         targetGroup = GameObject.Find("CM TargetGroup1").GetComponent<CinemachineTargetGroup>();
         // int playerCount = PlayerInputManager.instance.playerCount;
-        PlayerInputManager.instance.playerPrefab = _playerhandler.GetPlayerPrefabs()[targetGroup.m_Targets.Length];
+
+        // If the player joins by connecting a new device we need to adapt the sprite
+        int prefabIndex = _playerhandler.GetPlayerCount() % 4;
+        PlayerInputManager.instance.playerPrefab = _playerhandler.GetPlayerPrefabs()[prefabIndex];
 
         // Add the player to our Linked List Player Manager
         _playerhandler.AddPlayer(playerInput.gameObject);
@@ -64,7 +71,17 @@ public class PlayerJoin : MonoBehaviour
 
     public void OnPlayerJoinManually(InputAction.CallbackContext ctx)
     {
-        //PlayerInput playerInput = PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[0], pairWithDevice: InputSystem.devices[0]);
-        //OnPlayerJoin(playerInput);
+        if (ctx.performed) {
+            int numberPlayers = _playerhandler.GetPlayerCount();
+            if (numberPlayers > Playerhandler.MAX_PLAYERS)
+            {
+                return;
+            }
+            PlayerInput playerInput = PlayerInput.Instantiate(Playerhandler.Instance.GetPlayerPrefab(numberPlayers % Playerhandler.MAX_PLAYERS), pairWithDevice: InputSystem.devices[0]);
+            if (numberPlayers > 0) 
+            {
+                playerInput.currentActionMap.Disable();
+            }
+        }
     }
 }

@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Playerhandler : MonoBehaviour
 {
     public static LinkedList<GameObject> playerList = new();
+    public static int MAX_PLAYERS { get; } = 4;
     [SerializeField] private GameObject[] playerPrefabs;
+
+
     private static Playerhandler instance;
     public static Playerhandler Instance
     {
@@ -34,7 +38,7 @@ public class Playerhandler : MonoBehaviour
         {
             Instance = this;
         }
-
+        //Instantiate(playerJoinManually);
     }
 
     public void AddPlayer(GameObject player)
@@ -57,6 +61,21 @@ public class Playerhandler : MonoBehaviour
         return playerPrefabs;
     }
 
+    public GameObject GetPlayerPrefab(int idx)
+    {
+        return playerPrefabs[idx];
+    }
+
+    public GameObject GetPreviousPlayerCircular(GameObject player)
+    {
+        GameObject previousPlayer = GetPreviousPlayer(player);
+        if (previousPlayer == null)
+        {
+            return playerList.Last.Value;
+        }
+        return previousPlayer;
+    }
+
     public GameObject GetPreviousPlayer(GameObject player)
     {
         LinkedListNode<GameObject> currentPlayer = playerList.Find(player);
@@ -68,13 +87,12 @@ public class Playerhandler : MonoBehaviour
         {
             return currentPlayer.Previous.Value;
         }
-        return null;
     }
 
     // Returns the next player. If the player passed in the argument is the last player in the list, return the first player
-    public GameObject GetNextPlayerCircular(GameObject Player)
+    public GameObject GetNextPlayerCircular(GameObject player)
     {
-        GameObject nextPlayer = GetNextPlayer(Player);
+        GameObject nextPlayer = GetNextPlayer(player);
         if (nextPlayer == null)
         {
             return playerList.First.Value;
@@ -92,7 +110,11 @@ public class Playerhandler : MonoBehaviour
         {
             return currentPlayer.Next.Value;
         }
-        return null;
+    }
+
+    public int GetPlayerCount()
+    {
+        return playerList.Count;
     }
 
 }

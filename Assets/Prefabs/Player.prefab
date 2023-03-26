@@ -612,6 +612,38 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 94db369f-c373-4c81-b224-6fa7ec96d820
     m_ActionName: Player_Gamepad/AddNewPlayer[/DualSenseGamepadHID/select,/DualShock4GamepadHID/select]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5067423784504271551}
+        m_TargetAssemblyTypeName: PlayerSwitcher, Assembly-CSharp
+        m_MethodName: SwitchToNextPlayer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 98488d88-fd57-45bb-b254-4a06686dd70b
+    m_ActionName: Player/SwitchToNextPlayer[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5067423784504271551}
+        m_TargetAssemblyTypeName: PlayerSwitcher, Assembly-CSharp
+        m_MethodName: SwitchToPreviousPlayer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 8a7b38bf-5591-452e-b475-227fd54dea12
+    m_ActionName: Player/SwitchToPreviousPlayer[/Keyboard/q]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5239962872267403596}
-  - component: {fileID: 2851947766424560474}
+  - component: {fileID: 8729378872792885455}
   - component: {fileID: 5239962872267403597}
   - component: {fileID: 5239962872267403635}
   m_Layer: 0
@@ -34,7 +34,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2851947766424560474
+--- !u!114 &8729378872792885455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,6 +64,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rope: {fileID: 3255112595298807673, guid: e73991897bed23146b959a25ef646a2e, type: 3}
+  playerJoinManuallyObserver: {fileID: 7311395559187253282, guid: 8b46c59f09f8be7409622f137b311ead, type: 3}
 --- !u!114 &5239962872267403635
 MonoBehaviour:
   m_ObjectHideFlags: 0
