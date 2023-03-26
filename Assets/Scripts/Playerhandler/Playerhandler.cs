@@ -6,7 +6,7 @@ using UnityEngine;
 public class Playerhandler : MonoBehaviour
 {
     public static LinkedList<GameObject> playerList = new();
-    public static int MAX_PLAYERS { get; } = 4;
+    public static int MAX_PLAYERS { get; } = 3;
     [SerializeField] private GameObject[] playerPrefabs;
 
 
@@ -29,7 +29,6 @@ public class Playerhandler : MonoBehaviour
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
-
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -38,7 +37,6 @@ public class Playerhandler : MonoBehaviour
         {
             Instance = this;
         }
-        //Instantiate(playerJoinManually);
     }
 
     public void AddPlayer(GameObject player)

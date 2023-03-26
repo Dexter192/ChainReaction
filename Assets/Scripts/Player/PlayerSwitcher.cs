@@ -17,22 +17,18 @@ public class PlayerSwitcher : MonoBehaviour
     {
         if (ctx.performed)
         {
-            GameObject nextPlayer = _playerhandler.GetPreviousPlayerCircular(gameObject);
-            for (int i = 0; i < _playerhandler.GetPlayerCount(); i++)
+            LinkedList<GameObject> playerList = _playerhandler.GetPlayerList();
+            LinkedListNode<GameObject> currentPlayer = playerList.Find(gameObject);
+            LinkedListNode<GameObject> nextPlayer = currentPlayer.Previous;
+
+            if (nextPlayer != null)
             {
-                if (nextPlayer.GetComponent<PlayerInput>().currentActionMap.enabled)
-                {
-                    nextPlayer = _playerhandler.GetPreviousPlayerCircular(nextPlayer);
-                    continue;
-                }
-                else
-                {
-                    SwitchControls(gameObject, nextPlayer);
-                    break;
-                }
+                SwitchControls(gameObject, nextPlayer.Value);
             }
-
-
+            else
+            {
+                SwitchControls(gameObject, playerList.Last.Value);
+            }
         }
     }
 
@@ -40,19 +36,17 @@ public class PlayerSwitcher : MonoBehaviour
     {
         if (ctx.performed)
         {
-            GameObject nextPlayer = _playerhandler.GetNextPlayerCircular(gameObject);
-            for (int i = 0; i < _playerhandler.GetPlayerCount(); i++)
+            LinkedList<GameObject> playerList = _playerhandler.GetPlayerList();
+            LinkedListNode<GameObject> currentPlayer = playerList.Find(gameObject);
+            LinkedListNode<GameObject> nextPlayer = currentPlayer.Next;
+
+            if (nextPlayer != null)
             {
-                if (nextPlayer.GetComponent<PlayerInput>().currentActionMap.enabled)
-                { 
-                    nextPlayer = _playerhandler.GetNextPlayerCircular(nextPlayer);
-                    continue;
-                }
-                else
-                {
-                    SwitchControls(gameObject, nextPlayer);
-                    break;
-                }
+                SwitchControls(gameObject, nextPlayer.Value);
+            }
+            else
+            {
+                SwitchControls(gameObject, playerList.First.Value);
             }
         }
     }
