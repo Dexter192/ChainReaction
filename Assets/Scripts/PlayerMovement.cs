@@ -43,9 +43,9 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        anim = gameObject.transform.Find("Visuals").GetComponent<Animator>();
         coll = GetComponent<BoxCollider2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = gameObject.transform.Find("Visuals").GetComponent<SpriteRenderer>();
 
         this.currentState = MovementState.idle;
         isDragged = false;
@@ -61,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         updateAnimationState();
         resetDoubleJump();
         preventPlayerLeavingScreen();
+        CheckLanding(currentState);
         // Autoformat with: Alt + Shift + F
         if (jumped && canJump())
         {
@@ -147,4 +148,65 @@ public class PlayerMovement : MonoBehaviour
     {
         return currentState;
     }
+
+
+    #region Squish
+
+    Transform visualChildTransform;
+    Vector2 originalScale;
+    Vector2 originalPosition;
+    MovementState lastState;
+    bool coroutineRunning;
+    float xSquish = 0.3f;
+    float ySquish = -0.2f;
+    float yOffset = -0.1f;
+
+    private void OnEnable()
+    {
+        visualChildTransform = gameObject.transform.Find("Visuals").transform;
+        originalScale = visualChildTransform.localScale;
+        originalPosition = visualChildTransform.localPosition;
+        coroutineRunning = false;
+    }
+    private void CheckLanding(MovementState state)
+    {
+        //check if the character has landed if yes, squish!
+        if (lastState == MovementState.falling && isGrounded())
+        {
+            //reset if its already running
+            if(coroutineRunning == true)
+            {
+                StopCoroutine("Squish");
+                coroutineRunning = false;
+                SquishReset();
+            }
+            //squish it
+            IEnumerator coroutine = Squish(0.15f);
+            StartCoroutine(coroutine);
+        }
+        lastState = state;
+    }
+
+    private IEnumerator Squish(float time)
+    {
+        ApplySquish();
+        yield return new WaitForSeconds(time);
+        SquishReset();
+    }
+
+    void ApplySquish()
+    {        
+        Vector2 squishScale = new Vector2(originalScale.x + xSquish, originalScale.y + ySquish);
+        Vector2 squishPosition = new Vector2(originalPosition.x, originalPosition.y + yOffset);
+        visualChildTransform.localScale = squishScale;
+        visualChildTransform.localPosition = squishPosition;
+        coroutineRunning = true;
+    }
+
+    void SquishReset()
+    {
+        visualChildTransform.localPosition = originalPosition;
+        visualChildTransform.localScale = originalScale;
+    }
+    #endregion
 }
