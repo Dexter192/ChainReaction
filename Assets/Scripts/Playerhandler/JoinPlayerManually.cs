@@ -14,14 +14,12 @@ public class JoinPlayerManually : MonoBehaviour
                 return;
             }
             int prefabIndex = numberPlayers % Playerhandler.MAX_PLAYERS;
-            PlayerInput playerInput = PlayerInput.Instantiate(Playerhandler.Instance.GetPlayerPrefab(prefabIndex));
-            // Disable input & active indicator     for players that were spawned manually 
-            if (numberPlayers > 0)
-            {
-                playerInput.currentActionMap.Disable();
-                playerInput.gameObject.GetComponent<ActivePlayerIndicator>().SetInactive();
-                playerInput.user.UnpairDevices();
-            }
+            // We need to instantiate with an invalid device ID. This allows us to assign new devices to existing players
+            PlayerInput playerInput = PlayerInput.Instantiate(Playerhandler.Instance.GetPlayerPrefab(prefabIndex), pairWithDevice: new InputDevice());
+            // Disable input & active indicator for players that were spawned manually 
+            playerInput.currentActionMap.Disable();
+            playerInput.gameObject.GetComponent<ActivePlayerIndicator>().SetInactive();
+            playerInput.user.UnpairDevices();
         }
     }
 }

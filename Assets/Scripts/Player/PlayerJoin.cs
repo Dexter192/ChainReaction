@@ -43,13 +43,14 @@ public class PlayerJoin : MonoBehaviour
     {
         // If a player without a paired device exists, assign the device to the empty player
         GameObject unassignedPlayer = GetFirstUnassignedPlayer();
-        /*TODO
-         * if (unassignedPlayer != null)
+        // When the playerinput has an invalid device id, we know that it was manually spawned (afaik, this is the only way to check)
+        if (playerInput.user.pairedDevices[0].deviceId != InputDevice.InvalidDeviceId && unassignedPlayer != null)
         {
             ActivatePlayer(unassignedPlayer, playerInput.user.pairedDevices[0]);
-             PlayerInput.Destroy(playerInput);
+            Destroy(playerInput.gameObject);
             return;
-        }*/
+        }
+        
         // Set the player prefab
         // If the player joins by connecting a new device we need to adapt the sprite
         int prefabIndex = _playerhandler.GetPlayerCount() % Playerhandler.MAX_PLAYERS;

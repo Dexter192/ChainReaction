@@ -79,10 +79,12 @@ public class PlayerSwitcher : MonoBehaviour
         // Change device pairing
         player1Input.user.UnpairDevices();
         InputUser.PerformPairingWithDevice(player1InputDevice, player2Input.user, InputUserPairingOptions.UnpairCurrentDevicesFromUser);
-        
+
         // En-/Disable Actionmap
-        player1Input.currentActionMap.Disable();
-        player2Input.currentActionMap.Enable();
+        player1Input.DeactivateInput();
+        player2Input.ActivateInput();
+        //player1Input.currentActionMap.Disable();
+        //player2Input.currentActionMap.Enable();
         
         // Swap active player indicator
         player1.GetComponent<ActivePlayerIndicator>().SetInactive();
