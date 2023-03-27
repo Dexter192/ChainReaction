@@ -9,7 +9,7 @@ public class JoinPlayerManually : MonoBehaviour
         if (ctx.performed)
         {
             int numberPlayers = Playerhandler.Instance.GetPlayerCount();
-            if (numberPlayers > Playerhandler.MAX_PLAYERS)
+            if (numberPlayers >= Playerhandler.MAX_PLAYERS)
             {
                 return;
             }

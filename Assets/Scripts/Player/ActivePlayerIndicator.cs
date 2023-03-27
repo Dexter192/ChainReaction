@@ -22,6 +22,17 @@ public class ActivePlayerIndicator : MonoBehaviour
     {
         activeIndicator.SetActive(true);
     }
+
+    public void SetColor(Color color)
+    {
+        activeIndicator.GetComponent<SpriteRenderer>().color = color;
+    }
+
+    public Color GetColor()
+    {
+        return activeIndicator.GetComponent<SpriteRenderer>().color;
+    }
+
     public void SetInactive()
     {
         activeIndicator.SetActive(false);

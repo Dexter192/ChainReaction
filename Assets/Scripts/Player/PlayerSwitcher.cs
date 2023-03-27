@@ -85,9 +85,16 @@ public class PlayerSwitcher : MonoBehaviour
         player2Input.ActivateInput();
         //player1Input.currentActionMap.Disable();
         //player2Input.currentActionMap.Enable();
-        
+
         // Swap active player indicator
-        player1.GetComponent<ActivePlayerIndicator>().SetInactive();
-        player2.GetComponent<ActivePlayerIndicator>().SetActive();
+        ActivePlayerIndicator player1Indicator = player1.GetComponent<ActivePlayerIndicator>();
+        ActivePlayerIndicator player2Indicator = player2.GetComponent<ActivePlayerIndicator>();
+        player1Indicator.SetInactive();
+        player2Indicator.SetActive();
+
+        // Set playerindicator colour
+        Color player1Colour = player1Indicator.GetColor();
+        player1Indicator.SetColor(player2Indicator.GetColor());
+        player2Indicator.SetColor(player1Colour);
     }
 }

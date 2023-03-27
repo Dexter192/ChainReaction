@@ -4,7 +4,6 @@ using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PlayerJoin : MonoBehaviour
 {

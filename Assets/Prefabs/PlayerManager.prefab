@@ -51,7 +51,11 @@ MonoBehaviour:
   - {fileID: 2776808305920855830, guid: eac15ea21136b794a85a377cd6ede67c, type: 3}
   - {fileID: 1752428915862368729, guid: 1dd7470cbcdc9b749902dc17a8f788cb, type: 3}
   - {fileID: 1752428915862368729, guid: 1dd7470cbcdc9b749902dc17a8f788cb, type: 3}
-  playerObserver: {fileID: 5778327200910624580, guid: 31d39a939eefa024ba6c2ffdf4eb2f16, type: 3}
+  playerActiveIndicatorColors:
+  - {r: 0.014359593, g: 1, b: 0, a: 1}
+  - {r: 1, g: 0.7406687, b: 0, a: 1}
+  - {r: 0.9681535, g: 0, b: 1, a: 1}
+  - {r: 0, g: 0.050397873, b: 1, a: 1}
 --- !u!114 &5239962872267403597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +85,7 @@ MonoBehaviour:
   m_NotificationBehavior: 2
   m_MaxPlayerCount: 4
   m_AllowJoining: 1
-  m_JoinBehavior: 0
+  m_JoinBehavior: 1
   m_PlayerJoinedEvent:
     m_PersistentCalls:
       m_Calls:
@@ -113,17 +117,17 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_JoinAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
-      m_Name: 
+      m_Name: Join
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: 
+      m_Id: 5ef06dd4-06b0-41c8-8cd9-6f72cdccc5bc
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: 8495525560884051787, guid: 7a5278f7858c6af4789db05b3caa276c, type: 3}
   m_PlayerPrefab: {fileID: 2776808305920855830, guid: eac15ea21136b794a85a377cd6ede67c, type: 3}
   m_SplitScreen: 0
   m_MaintainAspectRatioInSplitScreen: 0
