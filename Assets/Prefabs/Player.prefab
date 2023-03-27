@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: -5061741888789890472}
   - component: {fileID: 1549467410446285934}
   - component: {fileID: 4180911099048830994}
+  - component: {fileID: 6370212377110817315}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -612,7 +613,19 @@ MonoBehaviour:
     m_ActionId: de4932c2-9ae3-4616-95c6-26779953aded
     m_ActionName: Player_Arrow_Keyboard/Reset
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6370212377110817315}
+        m_TargetAssemblyTypeName: JoinPlayerManually, Assembly-CSharp
+        m_MethodName: OnPlayerJoinManually
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 8cdaea20-46d8-4182-9b5a-61f40d723f15
     m_ActionName: Player/Join
   - m_PersistentCalls:
@@ -685,6 +698,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6370212377110817315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1549467410446285929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b68d048884720844486a8e6850276e81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8673795129878847765
 GameObject:
   m_ObjectHideFlags: 0

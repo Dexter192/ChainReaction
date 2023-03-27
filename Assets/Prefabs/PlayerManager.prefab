@@ -51,6 +51,7 @@ MonoBehaviour:
   - {fileID: 2776808305920855830, guid: eac15ea21136b794a85a377cd6ede67c, type: 3}
   - {fileID: 1752428915862368729, guid: 1dd7470cbcdc9b749902dc17a8f788cb, type: 3}
   - {fileID: 1752428915862368729, guid: 1dd7470cbcdc9b749902dc17a8f788cb, type: 3}
+  playerObserver: {fileID: 5778327200910624580, guid: 31d39a939eefa024ba6c2ffdf4eb2f16, type: 3}
 --- !u!114 &5239962872267403597
 MonoBehaviour:
   m_ObjectHideFlags: 0

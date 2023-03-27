@@ -1,11 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+using static UnityEditor.Experimental.GraphView.GraphView;
+
 public class PlayerJoin : MonoBehaviour
 {
     private Playerhandler _playerhandler;
@@ -16,7 +16,6 @@ public class PlayerJoin : MonoBehaviour
     public void Start()
     {
         _playerhandler = Playerhandler.Instance;
-        //Instantiate(playerJoinManuallyObserver);
         
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[0], pairWithDevice: InputSystem.devices[0]);
         //PlayerInput.Instantiate(_playerhandler.GetPlayerPrefabs()[1], pairWithDevice: InputSystem.devices[0]);
@@ -42,19 +41,26 @@ public class PlayerJoin : MonoBehaviour
 
     public void OnPlayerJoin(PlayerInput playerInput)
     {
-        if (playerInput.gameObject.CompareTag("Observer")) { return; }
+        // If a player without a paired device exists, assign the device to the empty player
+        GameObject unassignedPlayer = GetFirstUnassignedPlayer();
+        /*TODO
+         * if (unassignedPlayer != null)
+        {
+            ActivatePlayer(unassignedPlayer, playerInput.user.pairedDevices[0]);
+             PlayerInput.Destroy(playerInput);
+            return;
+        }*/
         // Set the player prefab
-        targetGroup = GameObject.Find("CM TargetGroup1").GetComponent<CinemachineTargetGroup>();
-        // int playerCount = PlayerInputManager.instance.playerCount;
-
         // If the player joins by connecting a new device we need to adapt the sprite
-        int prefabIndex = _playerhandler.GetPlayerCount() % 4;
+        int prefabIndex = _playerhandler.GetPlayerCount() % Playerhandler.MAX_PLAYERS;
         PlayerInputManager.instance.playerPrefab = _playerhandler.GetPlayerPrefabs()[prefabIndex];
 
         // Add the player to our Linked List Player Manager
         _playerhandler.AddPlayer(playerInput.gameObject);
         
-        if (targetGroup.m_Targets.Length > 0 )
+
+        targetGroup = GameObject.Find("CM TargetGroup1").GetComponent<CinemachineTargetGroup>();
+        if (targetGroup.m_Targets.Length > 0)
         {
             Instantiate(rope.gameObject, playerInput.gameObject.transform);
         }
@@ -69,21 +75,30 @@ public class PlayerJoin : MonoBehaviour
         Debug.Log("");
     }
 
-    public void OnPlayerJoinManually(InputAction.CallbackContext ctx)
+    // Returns the first unassigned player (or null if none)
+    private GameObject GetFirstUnassignedPlayer()
     {
-        if (ctx.performed) {
-            int numberPlayers = _playerhandler.GetPlayerCount();
-            if (numberPlayers > Playerhandler.MAX_PLAYERS)
-            {
-                return;
-            }
-            PlayerInput playerInput = PlayerInput.Instantiate(Playerhandler.Instance.GetPlayerPrefab(numberPlayers % Playerhandler.MAX_PLAYERS), pairWithDevice: InputSystem.devices[0]);
-            // Disable input & active indicator     for players that were spawned manually 
-            if (numberPlayers > 0) 
-            {
-                playerInput.currentActionMap.Disable();
-                playerInput.gameObject.GetComponent<ActivePlayerIndicator>().SetInactive();
-            }
+        LinkedList<GameObject> playerList = _playerhandler.GetPlayerList();
+        for (LinkedListNode<GameObject> player = playerList.First; player != null; player = player.Next)
+        {
+            if (player.Value.GetComponent<PlayerInput>().user.pairedDevices.Count == 0)
+                return player.Value;
         }
+        return null;
+    }
+
+    private void ActivatePlayer(GameObject player, InputDevice inputDevice)
+    {        
+        PlayerInput playerInput = player.GetComponent<PlayerInput>();
+
+        // Assign device with player
+        InputUser.PerformPairingWithDevice(inputDevice, playerInput.user, InputUserPairingOptions.UnpairCurrentDevicesFromUser);
+
+        // Enable Actionmap
+        playerInput.currentActionMap.Enable();
+
+        // Enable active indicator
+        playerInput.GetComponent<ActivePlayerIndicator>().SetActive();
+
     }
 }

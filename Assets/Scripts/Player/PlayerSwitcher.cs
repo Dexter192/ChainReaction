@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 
 public class PlayerSwitcher : MonoBehaviour
 {
@@ -19,15 +20,21 @@ public class PlayerSwitcher : MonoBehaviour
         {
             LinkedList<GameObject> playerList = _playerhandler.GetPlayerList();
             LinkedListNode<GameObject> currentPlayer = playerList.Find(gameObject);
-            LinkedListNode<GameObject> nextPlayer = currentPlayer.Previous;
-
-            if (nextPlayer != null)
+            LinkedListNode<GameObject> previousPlayer = currentPlayer;
+            
+            for (int i = 0; i < Playerhandler.MAX_PLAYERS; i++)
             {
-                SwitchControls(gameObject, nextPlayer.Value);
-            }
-            else
-            {
-                SwitchControls(gameObject, playerList.Last.Value);
+                previousPlayer = previousPlayer.Previous;
+                if (previousPlayer == null)
+                {
+                    previousPlayer = playerList.Last;
+                }
+                // Only switch to players that don't have a controller assigned to
+                if (previousPlayer.Value.GetComponent<PlayerInput>().user.pairedDevices.Count == 0)
+                {
+                    SwitchControls(gameObject, previousPlayer.Value);
+                    return;
+                }
             }
         }
     }
@@ -38,15 +45,21 @@ public class PlayerSwitcher : MonoBehaviour
         {
             LinkedList<GameObject> playerList = _playerhandler.GetPlayerList();
             LinkedListNode<GameObject> currentPlayer = playerList.Find(gameObject);
-            LinkedListNode<GameObject> nextPlayer = currentPlayer.Next;
+            LinkedListNode<GameObject> nextPlayer = currentPlayer;
 
-            if (nextPlayer != null)
+            for (int i = 0; i < Playerhandler.MAX_PLAYERS; i++)
             {
-                SwitchControls(gameObject, nextPlayer.Value);
-            }
-            else
-            {
-                SwitchControls(gameObject, playerList.First.Value);
+                nextPlayer = nextPlayer.Next;
+                if (nextPlayer == null)
+                {
+                    nextPlayer = playerList.First;
+                }
+                // Only switch to players that don't have a controller assigned to
+                if (nextPlayer.Value.GetComponent<PlayerInput>().user.pairedDevices.Count == 0)
+                {
+                    SwitchControls(gameObject, nextPlayer.Value);
+                    return;
+                }
             }
         }
     }
@@ -56,16 +69,23 @@ public class PlayerSwitcher : MonoBehaviour
         // TODO: Figure out how this works with Controllers, etc. (Maybe I don't need to do this)
         Debug.Log("Switching Controls from " + player1 + " to " + player2);
         PlayerInput player1Input = player1.GetComponent<PlayerInput>();
-        InputDevice player1InputDevice = player1Input.devices[0];
         
         PlayerInput player2Input = player2.GetComponent<PlayerInput>();
 
-        player1Input.SwitchCurrentControlScheme(player2Input.devices[0]);
-        player2Input.SwitchCurrentControlScheme(player1InputDevice);
-    
+        //player1Input.SwitchCurrentControlScheme(player2Input.devices[0]);
+        //player2Input.SwitchCurrentControlScheme(player1InputDevice);
+        InputDevice player1InputDevice = player1Input.user.pairedDevices[0];
+        
+        // Change device pairing
+        player1Input.user.UnpairDevices();
+        InputUser.PerformPairingWithDevice(player1InputDevice, player2Input.user, InputUserPairingOptions.UnpairCurrentDevicesFromUser);
+        
+        // En-/Disable Actionmap
         player1Input.currentActionMap.Disable();
-        player1.GetComponent<ActivePlayerIndicator>().SetInactive();
         player2Input.currentActionMap.Enable();
+        
+        // Swap active player indicator
+        player1.GetComponent<ActivePlayerIndicator>().SetInactive();
         player2.GetComponent<ActivePlayerIndicator>().SetActive();
     }
 }

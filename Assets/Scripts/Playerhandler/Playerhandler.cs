@@ -8,6 +8,7 @@ public class Playerhandler : MonoBehaviour
     public static LinkedList<GameObject> playerList = new();
     public static int MAX_PLAYERS { get; } = 3;
     [SerializeField] private GameObject[] playerPrefabs;
+    [SerializeField] public GameObject playerObserver;
 
 
     private static Playerhandler instance;
