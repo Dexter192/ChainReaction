@@ -78,9 +78,11 @@ public class PlayerJoin : MonoBehaviour
                 return;
             }
             PlayerInput playerInput = PlayerInput.Instantiate(Playerhandler.Instance.GetPlayerPrefab(numberPlayers % Playerhandler.MAX_PLAYERS), pairWithDevice: InputSystem.devices[0]);
+            // Disable input & active indicator     for players that were spawned manually 
             if (numberPlayers > 0) 
             {
                 playerInput.currentActionMap.Disable();
+                playerInput.gameObject.GetComponent<ActivePlayerIndicator>().SetInactive();
             }
         }
     }

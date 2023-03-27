@@ -64,6 +64,8 @@ public class PlayerSwitcher : MonoBehaviour
         player2Input.SwitchCurrentControlScheme(player1InputDevice);
     
         player1Input.currentActionMap.Disable();
+        player1.GetComponent<ActivePlayerIndicator>().SetInactive();
         player2Input.currentActionMap.Enable();
+        player2.GetComponent<ActivePlayerIndicator>().SetActive();
     }
 }
