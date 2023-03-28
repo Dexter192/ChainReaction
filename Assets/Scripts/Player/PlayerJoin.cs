@@ -10,7 +10,6 @@ public class PlayerJoin : MonoBehaviour
     private Playerhandler _playerhandler;
     private CinemachineTargetGroup targetGroup;
     [SerializeField] private Rope rope;
-    [SerializeField] public GameObject playerJoinManuallyObserver;
 
     public void Start()
     {
@@ -53,7 +52,7 @@ public class PlayerJoin : MonoBehaviour
         // Set the player prefab
         // If the player joins by connecting a new device we need to adapt the sprite
         int prefabIndex = _playerhandler.GetPlayerCount() % Playerhandler.MAX_PLAYERS;
-        PlayerInputManager.instance.playerPrefab = _playerhandler.GetPlayerPrefabs()[prefabIndex];
+        PlayerInputManager.instance.playerPrefab = _playerhandler.GetPlayerPrefab(prefabIndex);
 
         // Add the player to our Linked List Player Manager
         _playerhandler.AddPlayer(playerInput.gameObject);

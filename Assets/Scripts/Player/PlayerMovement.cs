@@ -8,7 +8,6 @@ public class PlayerMovement : MonoBehaviour
     private Animator anim;
 
     private bool canDoubleJump;
-    private bool isDragged;
     private BoxCollider2D coll;
     private Vector3 lastPosition;
 
@@ -22,6 +21,9 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+
+    [SerializeField] private GameObject visuals;
+
 
     public enum MovementState { idle, running, jumping, falling };
     private MovementState currentState;
@@ -43,12 +45,11 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = gameObject.transform.Find("Visuals").GetComponent<Animator>();
+        anim = visuals.GetComponent<Animator>();
         coll = GetComponent<BoxCollider2D>();
-        spriteRenderer = gameObject.transform.Find("Visuals").GetComponent<SpriteRenderer>();
+        spriteRenderer = visuals.GetComponent<SpriteRenderer>();
 
         this.currentState = MovementState.idle;
-        isDragged = false;
 
         canDoubleJump = true;
         this.lastPosition = transform.position;

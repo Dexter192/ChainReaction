@@ -1555,7 +1555,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -18.491776, y: 0.025242329, z: -8.406748}
+  m_LocalPosition: {x: -16.964691, y: -0.014535427, z: -8.406748}
   m_LocalScale: {x: 0.41664, y: 0.41664, z: 0.41664}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -37565,7 +37565,7 @@ PrefabInstance:
     - target: {fileID: 5239962872267403635, guid: 7b791a35a8178c94eb47f3ad4f5178b2, type: 3}
       propertyPath: m_PlayerPrefab
       value: 
-      objectReference: {fileID: 1752428915862368729, guid: 1dd7470cbcdc9b749902dc17a8f788cb, type: 3}
+      objectReference: {fileID: 1549467410446285929, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
     - target: {fileID: 5239962872267403635, guid: 7b791a35a8178c94eb47f3ad4f5178b2, type: 3}
       propertyPath: m_MaxPlayerCount
       value: 5
@@ -37574,6 +37574,10 @@ PrefabInstance:
       propertyPath: rope
       value: 
       objectReference: {fileID: 5410121183494478312, guid: f05734ae6c1bce042bacd2967087ef7e, type: 3}
+    - target: {fileID: 8729378872792885455, guid: 7b791a35a8178c94eb47f3ad4f5178b2, type: 3}
+      propertyPath: playerPrefabs.Array.data[3]
+      value: 
+      objectReference: {fileID: 1549467410446285929, guid: 31b8469cc06ba344ca0cb259901f9072, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b791a35a8178c94eb47f3ad4f5178b2, type: 3}
 --- !u!1001 &5410121182725985925

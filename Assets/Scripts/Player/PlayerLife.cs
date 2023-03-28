@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerLife : MonoBehaviour
 {
+    [SerializeField] private GameObject visuals;
     private Animator anim;
     private Playerhandler _playerhandler;
     [SerializeField] private AudioSource deathSound;
@@ -35,6 +36,7 @@ public class PlayerLife : MonoBehaviour
     private void MakePlayerDynamic()
     {
         rb.bodyType = RigidbodyType2D.Dynamic;
+        gameObject.GetComponentInParent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         anim.SetInteger("state", (int)0);
     }
 
@@ -66,7 +68,7 @@ public class PlayerLife : MonoBehaviour
     {
         spawnPos = transform.position;
         rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        anim = visuals.GetComponent<Animator>();
         _playerhandler = Playerhandler.Instance;
     }
 

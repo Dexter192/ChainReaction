@@ -7,7 +7,7 @@ using UnityEngine;
 public class Playerhandler : MonoBehaviour
 {
     public static LinkedList<GameObject> playerList = new();
-    public static int MAX_PLAYERS { get; private set; }
+    public static int MAX_PLAYERS { get; private set; } = 3;
     [SerializeField] private GameObject[] playerPrefabs;
 
     [SerializeField] public Color[] playerActiveIndicatorColors;
