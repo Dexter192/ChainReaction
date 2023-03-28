@@ -649,9 +649,9 @@ GameObject:
   - component: {fileID: 7638313166964961829}
   - component: {fileID: 7415489837731927379}
   - component: {fileID: 7310564779406090690}
-  - component: {fileID: 1122939958553888957}
+  - component: {fileID: 7577211452212472781}
   m_Layer: 0
-  m_Name: Visuals
+  m_Name: PlayerVisuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -745,7 +745,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1122939958553888957
+--- !u!114 &7577211452212472781
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -754,11 +754,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8079953343113209188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af51e42a54cdab8479da9a700a3b81d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 49e1e243dda778a41a64f90fb7b6912b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visuals: {fileID: 8079953343113209188}
-  deathSound: {fileID: 1549467410446285935}
 --- !u!1 &8673795129878847765
 GameObject:
   m_ObjectHideFlags: 0

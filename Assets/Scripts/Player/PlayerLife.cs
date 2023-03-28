@@ -13,6 +13,14 @@ public class PlayerLife : MonoBehaviour
     private Rigidbody2D rb;
     private Vector3 spawnPos;
 
+    private void Start()
+    {
+        spawnPos = transform.position;
+        rb = GetComponent<Rigidbody2D>();
+        anim = visuals.GetComponent<Animator>();
+        _playerhandler = Playerhandler.Instance;
+    }
+
     public void Reset(InputAction.CallbackContext ctx)
     {
         if (ctx.action.triggered) KillPlayers();
@@ -33,10 +41,9 @@ public class PlayerLife : MonoBehaviour
         }
     }
 
-    private void MakePlayerDynamic()
+    public void MakePlayerDynamic()
     {
         rb.bodyType = RigidbodyType2D.Dynamic;
-        gameObject.GetComponentInParent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         anim.SetInteger("state", (int)0);
     }
 
@@ -48,12 +55,12 @@ public class PlayerLife : MonoBehaviour
         }
     }
 
-    private void RestartLevel()
+    /*private void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    }*/
 
-    private void Spawn()
+    public void Spawn()
     {
         transform.position = spawnPos;
         Rope rope = transform.GetComponentInChildren<Rope>();
@@ -63,13 +70,4 @@ public class PlayerLife : MonoBehaviour
         }
         anim.SetTrigger("spawn");
     }
-
-    private void Start()
-    {
-        spawnPos = transform.position;
-        rb = GetComponent<Rigidbody2D>();
-        anim = visuals.GetComponent<Animator>();
-        _playerhandler = Playerhandler.Instance;
-    }
-
 }

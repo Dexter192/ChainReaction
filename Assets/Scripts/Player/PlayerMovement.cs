@@ -164,7 +164,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        visualChildTransform = gameObject.transform.Find("Visuals").transform;
+        visualChildTransform = visuals.transform;
         originalScale = visualChildTransform.localScale;
         originalPosition = visualChildTransform.localPosition;
         coroutineRunning = false;
