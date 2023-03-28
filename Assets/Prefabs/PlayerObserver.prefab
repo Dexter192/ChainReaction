@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5778327200910624580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 421307670188341880}
+  - component: {fileID: 5995294009884182118}
+  - component: {fileID: -7552080204020272250}
+  m_Layer: 0
+  m_Name: PlayerObserver
+  m_TagString: Observer
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &421307670188341880
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5778327200910624580}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.8164704, y: 3.6138391, z: 0.026143614}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5995294009884182118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5778327200910624580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b68d048884720844486a8e6850276e81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-7552080204020272250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5778327200910624580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 7a5278f7858c6af4789db05b3caa276c, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5af4fdbc-641e-460c-a517-172ed8d16aeb
+    m_ActionName: Player/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 456bb3e7-581a-49c6-b192-44004ae926c4
+    m_ActionName: Player/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f0e9e209-3488-4dff-9f25-bc1cee47ba45
+    m_ActionName: Player/Reset[/DualSenseGamepadHID/start,/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 77e43eb6-2494-4c8c-b4fd-56afc083deef
+    m_ActionName: Player_Keyboard/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: e4f010f9-fdf5-46cf-ae04-49be6333874d
+    m_ActionName: Player_Keyboard/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: a166140f-83fe-4de8-9d1a-3b38a7f4a0db
+    m_ActionName: Player_Keyboard/Reset[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8ff1fc53-ebe3-482f-95ad-147c7bd3f4dd
+    m_ActionName: Player_Gamepad/Movement[/DualShock4GamepadHID/leftStick,/DualSenseGamepadHID/leftStick,/DualShock4GamepadHID/dpad,/DualSenseGamepadHID/dpad]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b32b7b33-9c5b-4fb6-9938-c8c27f2bba12
+    m_ActionName: Player_Gamepad/Jump[/DualShock4GamepadHID/buttonSouth,/DualSenseGamepadHID/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 92c48da8-b142-463b-8c71-3e6ac4d247fd
+    m_ActionName: Player_Gamepad/Reset[/DualShock4GamepadHID/start,/DualSenseGamepadHID/start]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f4e42fa3-9a28-4a98-a923-35323f12630f
+    m_ActionName: Player_Arrow_Keyboard/Movement[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 61720c5f-8752-46e8-ba2c-53d982f689ce
+    m_ActionName: Player_Arrow_Keyboard/Jump[/Keyboard/numpadEnter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: de4932c2-9ae3-4616-95c6-26779953aded
+    m_ActionName: Player_Arrow_Keyboard/Reset
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5995294009884182118}
+        m_TargetAssemblyTypeName: JoinPlayerManually, Assembly-CSharp
+        m_MethodName: OnPlayerJoinManually
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 8cdaea20-46d8-4182-9b5a-61f40d723f15
+    m_ActionName: Player/Join
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: bcdfa73f-a2d0-4127-8a15-8c7933a688fc
+    m_ActionName: Player_Keyboard/AddNewPlayer[/Keyboard/n,/DualSenseGamepadHID/select,/DualShock4GamepadHID/select,/Keyboard/numpadPlus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 59be702e-7058-435c-a383-fa88f14c7b65
+    m_ActionName: Player_Arrow_Keyboard/AddNewPlayer[/Keyboard/numpadPlus]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 94db369f-c373-4c81-b224-6fa7ec96d820
+    m_ActionName: Player_Gamepad/AddNewPlayer[/DualSenseGamepadHID/select,/DualShock4GamepadHID/select]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 98488d88-fd57-45bb-b254-4a06686dd70b
+    m_ActionName: Player/SwitchToNextPlayer[/Keyboard/e]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8a7b38bf-5591-452e-b475-227fd54dea12
+    m_ActionName: Player/SwitchToPreviousPlayer[/Keyboard/q]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}

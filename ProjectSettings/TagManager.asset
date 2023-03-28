@@ -9,6 +9,7 @@ TagManager:
   - Score
   - Ground
   - Square
+  - Observer
   layers:
   - Default
   - TransparentFX
