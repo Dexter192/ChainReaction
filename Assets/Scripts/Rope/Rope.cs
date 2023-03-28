@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,6 @@ public class Rope : MonoBehaviour
 {
     // Rope physics features
     [SerializeField] private float friction = 0.5f;
-    [SerializeField] private float ropeElasticity = 0.001f;
     [SerializeField] private float ropePullbackForce = 0.1f;
     [SerializeField] private Vector2 forceGravity = new(0f, -1f);
 
@@ -39,8 +39,14 @@ public class Rope : MonoBehaviour
     // Start is called before the first frame update    
     private void Start()
     {
+        if (totalSegmentCount % 2 != 0)
+        {
+            Destroy(gameObject);
+            throw new ArgumentException("Rope segments must be an even integer", nameof(totalSegmentCount));
+        }
+        
+   
         //Disable rope for test simulation
-        //Destroy(gameObject);
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
@@ -63,13 +69,10 @@ public class Rope : MonoBehaviour
         for (int i = 0; i < totalSegmentCount; i++)
         {
             ropeSegments.Add(new RopeSegment(
-                    new Vector2(startPos.x - (startPos.x - endPos.x) * i / (totalSegmentCount),
-                                startPos.y - (startPos.y - endPos.y) * i / (totalSegmentCount)
+                    new Vector2(startPos.x - (startPos.x - endPos.x) * i / (totalSegmentCount-1),
+                                startPos.y - (startPos.y - endPos.y) * i / (totalSegmentCount-1)
                     )));
         }
-
-        AttachRopeSegmentToPlayer(startPoint, 0);
-        AttachRopeSegmentToPlayer(endPoint, totalSegmentCount - 1);
     }
 
     // Update is called once per frame
@@ -107,20 +110,51 @@ public class Rope : MonoBehaviour
         // CONSTRAINTS
         for (int i = 0; i < numIterations; i++)
         {
-            ApplyConstraint();
+            ApplyConstraints();
             ropeSegments = RopeCollider.AdjustCollision(ropeSegments, collisionInfo);
         }
     }
-    private void ApplyConstraint()
+
+    private void ApplyConstraints()
     {
-        // If the player is moving, we pin the point to the player
-        AttachRopeSegmentToPlayer(startPoint, 0);
+        // In order to simulate a realistic rope, we want to simulate the first half from the startpoint and the second half from the endpoint
+        ApplyConstraintFirstHalf();
+        ApplyConstraintSecondHalfBackwards();
+    }
+    private void ApplyConstraintSecondHalfBackwards()
+    {
 
         // Last Segment is pinned to the second player
         AttachRopeSegmentToPlayer(endPoint, totalSegmentCount - 1);
 
         // CONSTRAINT - Ensure that rope segments are always a certain distance apart
-        for (int i = 0; i < totalSegmentCount - 1; i++)
+        for (int i = totalSegmentCount-1; i >= totalSegmentCount/2; i--)
+        {
+            RopeSegment segment = ropeSegments[i];
+            RopeSegment previousSegment = ropeSegments[i - 1];
+
+            float dist = (previousSegment.posNow - segment.posNow).magnitude;
+            float error = dist - ropeSegLen;
+            Vector2 changeDir = (segment.posNow - previousSegment.posNow).normalized;
+            Vector2 changeAmount = changeDir * error;
+            float modifier = 0.5f;
+
+            // The last segment (attached to the second player) allows the rope to stretch  
+            if (i == totalSegmentCount - 1)
+                modifier = ropePullbackForce;
+
+            AdjustAdjacentSegments(segment, previousSegment, changeAmount, modifier);
+        }
+
+        AttachPlayerToRopeSegment(endPoint, totalSegmentCount - 1);
+    }
+
+    private void ApplyConstraintFirstHalf()
+    {
+        // If the player is moving, we pin the point to the player
+        AttachRopeSegmentToPlayer(startPoint, 0);
+        // CONSTRAINT - Ensure that rope segments are always a certain distance apart
+        for (int i = 0; i < totalSegmentCount/2; i++)
         {
             RopeSegment segment = ropeSegments[i];
             RopeSegment nextSegment = ropeSegments[i + 1];
@@ -129,54 +163,25 @@ public class Rope : MonoBehaviour
             float error = dist - ropeSegLen;
             Vector2 changeDir = (segment.posNow - nextSegment.posNow).normalized;
             Vector2 changeAmount = changeDir * error;
+            float modifier = 0.5f;
 
-            // Handle first segment (attached to the first player)
+            // The first segment (attached to the first player) allows the rope to stretch  
             if (i == 0)
-            {
-                segment.posNow -= changeAmount * ropePullbackForce;
-                ropeSegments[i] = segment;
-                nextSegment.posNow += changeAmount * (1 - ropePullbackForce);
-                ropeSegments[i + 1] = nextSegment;
+                modifier = ropePullbackForce;
 
-                // Slow the player down if the rope is stretched
-                ReducePlayersSpeedOnStretchedRope(startPoint, changeAmount);
-            }
-
-            // Handle last segment (attached to the second player)
-            else if (i == totalSegmentCount - 2)
-            {
-                segment.posNow -= changeAmount * (1 - ropePullbackForce);
-                ropeSegments[i] = segment;
-                nextSegment.posNow += changeAmount * ropePullbackForce;
-                ropeSegments[i + 1] = nextSegment;
-
-                // Slow the player down if the rope is stretched
-                ReducePlayersSpeedOnStretchedRope(endPoint,-changeAmount);
-            }
-
-            // Handle Segments in the middle
-            else
-            {
-                segment.posNow -= changeAmount * 0.5f;
-                ropeSegments[i] = segment;
-                nextSegment.posNow += changeAmount * 0.5f;
-                ropeSegments[i + 1] = nextSegment;
-            }
+            AdjustAdjacentSegments(segment, nextSegment, changeAmount, modifier);
 
         }
         
         AttachPlayerToRopeSegment(startPoint, 0);
-        AttachPlayerToRopeSegment(endPoint, totalSegmentCount - 1);
     }
 
-    private void ReducePlayersSpeedOnStretchedRope(GameObject player, Vector2 changeAmount)
+    private void AdjustAdjacentSegments(RopeSegment segment1, RopeSegment segment2, Vector2 changeAmount, float modifier = 0.5f)
     {
-        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-        if (playerMovement.GetMovementState() != PlayerMovement.MovementState.idle)
-        {
-            playerMovement.AddVelocity(-changeAmount * ropeElasticity);
-        }
+        segment1.posNow -= changeAmount * modifier;
+        segment2.posNow += changeAmount * (1 - modifier);
     }
+
     private void AttachRopeSegmentToPlayer(GameObject player, int ropeSegmentIndex)
     {
         RopeSegment firstSegment = ropeSegments[ropeSegmentIndex];
