@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerAnimationInvoke : MonoBehaviour
 {
     PlayerLife playerLife;
-
     void Awake()
     {
         playerLife = gameObject.transform.parent.GetComponent<PlayerLife>();
