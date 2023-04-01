@@ -7,7 +7,7 @@ public class PlayerAnimationInvoke : MonoBehaviour
     PlayerLife playerLife;
     void Awake()
     {
-        playerLife = gameObject.transform.parent.GetComponent<PlayerLife>();
+        playerLife = GetComponentInParent<PlayerLife>();
     }
 
     private void Spawn()

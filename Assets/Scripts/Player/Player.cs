@@ -5,30 +5,25 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private PlayerMovement playerMovement;
-    private PlayerJump playerJump;
     private PlayerRenderer playerRenderer;
     private PlayerInputHandler playerInputHandler;
     private PlayerAnimationManager playerAnimationManager;
+    private PlayerMovementManager playerMovementManager;
 
     [SerializeField] private GameObject visuals;
 
     private void Start()
     {
-        playerMovement = GetComponent<PlayerMovement>();
         playerInputHandler = GetComponent<PlayerInputHandler>();
-        playerJump = GetComponent<PlayerJump>();
-        playerInputHandler.OnJumpEvent += () => playerJump.Jump();
         playerRenderer = visuals.GetComponent<PlayerRenderer>();
         playerAnimationManager = visuals.GetComponent<PlayerAnimationManager>();
+        playerMovementManager = GetComponent<PlayerMovementManager>();
     }
 
     private void Update()
     {
-        playerMovement.MovePlayer(playerInputHandler.MovementInputVector);
+        playerMovementManager.ManageMovement();
         playerRenderer.RenderPlayer(playerInputHandler.MovementInputVector);
-        playerAnimationManager.SetupAnimations(playerMovement.playerVelocity);
-
-        playerJump.ResetDoubleJump();
+        playerAnimationManager.SetupAnimations(playerMovementManager.PlayerVelocity);
     }
 }

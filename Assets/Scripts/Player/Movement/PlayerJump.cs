@@ -8,22 +8,21 @@ public class PlayerJump : MonoBehaviour
     [SerializeField] private AudioSource jumpSound;
     private PlayerGrounded playerGrounded;
 
-    private Rigidbody2D rigidbody;
     private bool canDoubleJump;
 
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();  
-        playerGrounded = GetComponentInParent<PlayerGrounded>();
+        playerGrounded = GetComponent<PlayerGrounded>();
     }
 
-    public void Jump()
+    public Vector2 Jump(Vector2 currentVelocity)
     {
         if (CanJump())
         {
-            rigidbody.velocity = new Vector2(rigidbody.velocity.x, jumpForce);
-            jumpSound.Play();    
+            jumpSound.Play();
+            currentVelocity = new Vector2(currentVelocity.x, jumpForce);
         }
+        return currentVelocity;
     }
 
     private bool CanJump()

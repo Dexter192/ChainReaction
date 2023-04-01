@@ -15,11 +15,22 @@ public class PlayerSquish : MonoBehaviour
 
     private void Start()
     {
-        playerGrounded = GetComponentInParent<PlayerGrounded>();
+        playerGrounded = GetComponent<PlayerGrounded>();
     }
     public void Squish(PlayerState playerState)
     {
-        CheckLanding(playerState);
+        if (CheckLanding(playerState)) { 
+            //reset if its already running
+            if (coroutineRunning == true)
+            {
+                StopCoroutine("SquishCoroutine");
+                coroutineRunning = false;
+                SquishReset();
+            }
+            //squish it
+            IEnumerator coroutine = SquishCoroutine(0.15f);
+            StartCoroutine(coroutine);
+        }
     }
 
     private void OnEnable()
@@ -28,25 +39,12 @@ public class PlayerSquish : MonoBehaviour
         originalPosition = transform.localPosition;
         coroutineRunning = false;
     }
-    private void CheckLanding(PlayerState playerState)
+    private bool CheckLanding(PlayerState playerState)
     {
-        //check if the character has landed if yes, squish!
-        if (playerState.LastState == PlayerState.MovementState.falling && playerGrounded.isGrounded())
-        {
-            //reset if its already running
-            if (coroutineRunning == true)
-            {
-                StopCoroutine("Squish");
-                coroutineRunning = false;
-                SquishReset();
-            }
-            //squish it
-            IEnumerator coroutine = Squish(0.15f);
-            StartCoroutine(coroutine);
-        }
+        return playerState.LastState == PlayerState.MovementState.falling && playerGrounded.isGrounded();
     }
 
-    private IEnumerator Squish(float time)
+    private IEnumerator SquishCoroutine(float time)
     {
         ApplySquish();
         yield return new WaitForSeconds(time);

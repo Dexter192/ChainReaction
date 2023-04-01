@@ -66,14 +66,9 @@ public class PlayerSwitcher : MonoBehaviour
 
     private void SwitchControls(GameObject player1, GameObject player2)
     {
-        // TODO: Figure out how this works with Controllers, etc. (Maybe I don't need to do this)
-        Debug.Log("Switching Controls from " + player1 + " to " + player2);
-        PlayerInput player1Input = player1.GetComponent<PlayerInput>();
-        
+        PlayerInput player1Input = player1.GetComponent<PlayerInput>();        
         PlayerInput player2Input = player2.GetComponent<PlayerInput>();
 
-        //player1Input.SwitchCurrentControlScheme(player2Input.devices[0]);
-        //player2Input.SwitchCurrentControlScheme(player1InputDevice);
         InputDevice player1InputDevice = player1Input.user.pairedDevices[0];
         
         // Change device pairing
@@ -83,8 +78,6 @@ public class PlayerSwitcher : MonoBehaviour
         // En-/Disable Actionmap
         player1Input.DeactivateInput();
         player2Input.ActivateInput();
-        //player1Input.currentActionMap.Disable();
-        //player2Input.currentActionMap.Enable();
 
         // Swap active player indicator
         ActivePlayerIndicator player1Indicator = player1.GetComponent<ActivePlayerIndicator>();

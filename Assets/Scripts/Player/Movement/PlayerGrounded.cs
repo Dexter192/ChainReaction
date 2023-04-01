@@ -10,7 +10,7 @@ public class PlayerGrounded : MonoBehaviour
 
     private void Start()
     {
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponentInParent<BoxCollider2D>();
     }
     public bool isGrounded()
     {

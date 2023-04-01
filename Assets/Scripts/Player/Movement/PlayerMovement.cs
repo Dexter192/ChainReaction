@@ -1,19 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Rigidbody2D rigidbody;
-    public Vector2 playerVelocity { get => rigidbody.velocity; }
+    public Vector2 playerVelocity { get; private set; }
     [SerializeField] private float movementSpeed = 7f;
-    private void Start()
-    {
-        rigidbody = GetComponent<Rigidbody2D>();
-    }
 
-    public void MovePlayer(Vector2 movementVector)
+    public Vector2 CalculateNewPlayerVelocity(Vector2 playerInputMovement, Vector2 currentVelocity)
     {
-        rigidbody.velocity = new Vector2(movementVector.x * movementSpeed, rigidbody.velocity.y);
+        playerVelocity = new Vector2(playerInputMovement.x * movementSpeed, currentVelocity.y);
+        return playerVelocity;
     }
 }
