@@ -1,17 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public class PlayerSquish : MonoBehaviour
 {
-    PlayerGrounded playerGrounded;
-    Vector2 originalScale;
-    Vector2 originalPosition;
-    bool coroutineRunning;
-    float xSquish = 0.3f;
-    float ySquish = -0.2f;
-    float yOffset = -0.1f;
+    private PlayerGrounded playerGrounded;
+    private Vector2 originalScale;
+    private Vector2 originalPosition;
+    private bool coroutineRunning;
+    private float xSquish = 0.3f;
+    private float ySquish = -0.2f;
+    private float yOffset = -0.1f;
 
     private void Start()
     {
